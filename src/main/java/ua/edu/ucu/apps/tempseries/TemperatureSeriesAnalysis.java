@@ -1,64 +1,215 @@
 package ua.edu.ucu.apps.tempseries;
 
+import java.util.Arrays;
+import java.util.InputMismatchException;
+
 public class TemperatureSeriesAnalysis {
 
-    public TemperatureSeriesAnalysis() {
+    private double [] temperatureSeries;
 
+    public TemperatureSeriesAnalysis() {
+        this.temperatureSeries = new double[0];
     }
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
-
+        this.temperatureSeries = temperatureSeries;
     }
 
     public double average() {
-        return -1;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+    
+        double sum = 0;
+        for (double temp : temperatureSeries) {
+            sum += temp;
+        }
+        return sum / temperatureSeries.length;
     }
 
     public double deviation() {
-        return 0;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+    
+        double avg = average();
+        double sumOfSquaredDiffs = 0;
+        
+        for (double temp : temperatureSeries) {
+            sumOfSquaredDiffs += Math.pow(temp - avg, 2);
+        }
+        return Math.sqrt(sumOfSquaredDiffs / temperatureSeries.length);
     }
 
     public double min() {
-        return 0;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+    
+        double minTemp = temperatureSeries[0];
+        for (double temp : temperatureSeries) {
+            if (temp < minTemp) {
+                minTemp = temp;
+            }
+        }
+        return minTemp;
     }
 
     public double max() {
-        return 0;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+    
+        double maxTemp = temperatureSeries[0];
+        for (double temp : temperatureSeries) {
+            if (temp > maxTemp) {
+                maxTemp = temp;
+            }
+        }
+        return maxTemp;
     }
 
     public double findTempClosestToZero() {
-        return 0;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+    
+        double closest = temperatureSeries[0];
+        for (double temp : temperatureSeries) {
+            if (Math.abs(temp) < Math.abs(closest)) {
+                closest = temp;
+            } else if (Math.abs(temp) == Math.abs(closest) && temp > closest) {
+                closest = temp;
+            }
+        }
+        return closest;
     }
 
     public double findTempClosestToValue(double tempValue) {
-        return 0;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+    
+        double closest = temperatureSeries[0];
+        for (double temp : temperatureSeries) {
+            if (Math.abs(temp - tempValue) < Math.abs(closest - tempValue)) {
+                closest = temp;
+            } else if (Math.abs(temp - tempValue) == Math.abs(closest - tempValue) && temp > closest) {
+                closest = temp;
+            }
+        }
+        return closest;
     }
 
     public double[] findTempsLessThen(double tempValue) {
-        return null;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+
+        int count = 0;
+        for (double temp : temperatureSeries) {
+            if (temp < tempValue) {
+                count++;
+            }
+        }
+        double[] result = new double[count];
+        int index = 0;
+        for (double temp : temperatureSeries) {
+            if (temp < tempValue) {
+                result[index++] = temp;
+            }
+        }
+        return result;
     }
 
     public double[] findTempsGreaterThen(double tempValue) {
-        return null;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+    
+        int count = 0;
+        for (double temp : temperatureSeries) {
+            if (temp >= tempValue) {
+                count++;
+            }
+        }
+        double[] result = new double[count];
+        int index = 0;
+        for (double temp : temperatureSeries) {
+            if (temp >= tempValue) {
+                result[index++] = temp;
+            }
+        }
+        return result;
     }
 
     public double[] findTempsInRange(double lowerBound, double upperBound) {
-        return null;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+    
+        int count = 0;
+        for (double temp : temperatureSeries) {
+            if (temp >= lowerBound && temp <= upperBound) {
+                count++;
+            }
+        }
+        double[] result = new double[count];
+        int index = 0;
+        for (double temp : temperatureSeries) {
+            if (temp >= lowerBound && temp <= upperBound) {
+                result[index++] = temp;
+            }
+        }
+        return result;
     }
 
     public void reset() {
-
+        temperatureSeries = new double[0];
     }
 
     public double[] sortTemps() {
-        return null;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+        throw new IllegalArgumentException("Temperature series is empty");
+        }
+        double[] sortedTemps = temperatureSeries.clone();
+        Arrays.sort(sortedTemps);
+        return sortedTemps;
     }
 
     public TempSummaryStatistics summaryStatistics() {
-        return null;
+        if (temperatureSeries == null || temperatureSeries.length == 0) {
+            throw new IllegalArgumentException("Temperature series is empty");
+        }
+        double avg = average();
+        double dev = deviation();
+        double min = min();
+        double max = max();
+
+        return new TempSummaryStatistics(avg, dev, min, max);
     }
 
     public int addTemps(double... temps) {
-        return 0;
+        if (temps == null || temps.length == 0) {
+        throw new IllegalArgumentException("No temperatures to add");
+        }
+
+        for (double temp : temps) {
+            if (temp < -273) {
+                throw new InputMismatchException("Temperature below absolute zero (-273°C)");
+            }
+        }
+
+        if (temperatureSeries.length + temps.length > temperatureSeries.length) {
+            double[] newSeries = new double[temperatureSeries.length * 2 + temps.length];
+            System.arraycopy(temperatureSeries, 0, newSeries, 0, temperatureSeries.length);
+            temperatureSeries = newSeries;
+        }
+
+        int currentIndex = temperatureSeries.length;
+        for (double temp : temps) {
+            temperatureSeries[currentIndex++] = temp;
+        }
+            return currentIndex;
     }
 }
