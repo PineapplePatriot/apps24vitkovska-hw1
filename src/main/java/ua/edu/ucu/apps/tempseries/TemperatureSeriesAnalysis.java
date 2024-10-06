@@ -6,6 +6,7 @@ import java.util.InputMismatchException;
 public class TemperatureSeriesAnalysis {
 
     private double [] temperatureSeries;
+    private int actualSize;
 
     public TemperatureSeriesAnalysis() {
         this.temperatureSeries = new double[0];
@@ -13,6 +14,7 @@ public class TemperatureSeriesAnalysis {
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
         this.temperatureSeries = temperatureSeries;
+        this.actualSize = temperatureSeries.length;
     }
 
     public double average() {
@@ -166,6 +168,7 @@ public class TemperatureSeriesAnalysis {
 
     public void reset() {
         temperatureSeries = new double[0];
+        actualSize = 0;
     }
 
     public double[] sortTemps() {
@@ -200,16 +203,15 @@ public class TemperatureSeriesAnalysis {
             }
         }
 
-        if (temperatureSeries.length + temps.length > temperatureSeries.length) {
+        if (actualSize + temps.length > temperatureSeries.length) {
             double[] newSeries = new double[temperatureSeries.length * 2 + temps.length];
-            System.arraycopy(temperatureSeries, 0, newSeries, 0, temperatureSeries.length);
+            System.arraycopy(temperatureSeries, 0, newSeries, 0, actualSize);
             temperatureSeries = newSeries;
         }
 
-        int currentIndex = temperatureSeries.length;
         for (double temp : temps) {
-            temperatureSeries[currentIndex++] = temp;
+            temperatureSeries[actualSize++] = temp;
         }
-            return currentIndex;
+            return actualSize;
     }
 }
